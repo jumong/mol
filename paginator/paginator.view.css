@@ -1,0 +1,24 @@
+[mol_paginator] {
+	display: flex;
+}
+
+[mol_paginator_backward] ,
+[mol_paginator_forward] {
+	padding: .5rem;
+	margin: 0 -1rem;
+	transform: scale( 0 , 0 );
+}
+
+[mol_paginator_value] {
+	padding: .5rem;
+	display: flex;
+    align-items: center;
+}
+
+[hyoo_slides_listener_head]:hover [mol_paginator_backward] {
+	transform: scale( -1 , 1 );
+}
+
+[hyoo_slides_listener_head]:hover [mol_paginator_forward] {
+	transform: scale( 1 , 1 );
+}

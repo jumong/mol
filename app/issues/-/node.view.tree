@@ -1,0 +1,330 @@
+$mol_button $mol_view
+	enabled true
+	minimal_height 40
+	click?event null
+	event_click?event null
+	event *
+		^
+		click?event <=> event_activate?event null
+		keypress?event <=> event_key_press?event null 
+	attr *
+		^
+		disabled <= disabled false
+		role \button
+		tabindex <= tab_index 0
+		title <= hint \
+	sub /
+		<= title
+
+$mol_button_typed $mol_button
+
+$mol_button_major $mol_button_typed
+	attr *
+		^
+		mol_theme \$mol_theme_accent
+
+$mol_button_minor $mol_button_typed
+
+$mol_scroll $mol_view
+	minimal_height 0
+	moving_hor?val false
+	moving_vert?val false
+	field *
+		^
+		scrollTop <= scroll_top?val 0
+		scrollLeft <= scroll_left?val 0
+		scrollBottom <= scroll_bottom?val 0
+		scrollRight <= scroll_right?val 0
+	event_async *
+		^
+		scroll?event <=> event_scroll?event null
+		- DOMSubtreeModified?event <=> event_repos?event null
+	Strut $mol_view
+		style *
+			transform <= strut_transform \
+
+$mol_page $mol_view
+	sub /
+		<= Head $mol_view
+			attr * mol_theme \$mol_theme_base
+			sub <= head /
+				<= Title $mol_button
+					sub /
+						<= title
+					event_click?val <=> event_top?val null
+				<= Tools $mol_view
+					sub <= tools /
+		<= Body $mol_scroll
+			scroll_top?val <=> body_scroll_top?val 0
+			sub <= body /
+		<= Foot $mol_view
+			attr * mol_theme \$mol_theme_base
+			sub <= foot /
+
+$mol_link $mol_view
+	minimal_height 40
+	dom_name \a
+	attr *
+		^
+		href <= uri \
+		title <= hint \
+		target <= target \_self
+		download <= file_name \
+		mol_link_current <= current false
+	sub / <= title
+	arg *
+	event *
+		^
+		click?event <=> click?event <=> event_click?event null
+
+$mol_image $mol_view
+	dom_name \img
+	field *
+		^
+		src <= uri \
+		alt <= title
+
+$mol_link_iconed $mol_link
+	sub /
+		<= Icon $mol_image
+			uri <= icon \
+		<= content /
+			<= title <= uri
+	host \
+
+$mol_row $mol_view
+
+$mol_row_sub $mol_view
+
+$mol_svg $mol_view
+	dom_name \svg
+	dom_name_space \http://www.w3.org/2000/svg
+
+
+$mol_svg_root $mol_svg
+	dom_name \svg
+	attr *
+		^
+		viewBox <= view_box \0 0 100 100
+		preserveAspectRatio <= aspect \xMidYMid
+
+$mol_plugin $mol_object
+	dom_node null
+	attr_static *
+	event *
+	event_async *
+
+$mol_meter $mol_plugin
+	zoom 1
+	-
+	width?val 0
+	height?val 0
+	-
+	left?val 0
+	right?val 0
+	bottom?val 0
+	top?val 0
+
+$mol_plot_pane $mol_svg_root
+	aspect \none
+	-
+	hue_base?val NaN
+	hue_shift?val 111
+	-
+	gap 24
+	gap_hor <= gap
+	gap_vert <= gap
+	gap_left <= gap_hor
+	gap_right <= gap_hor
+	gap_top <= gap_vert
+	gap_bottom <= gap_vert
+	-
+	shift /
+		0
+		0
+	scale /
+		1
+		1
+	size_real /
+		1
+		1
+	-
+	sub <= graphs_sorted <= graphs_colored <= graphs_positioned <= graphs /
+	-
+	plugins /
+		<= Meter $mol_meter
+			width => width
+			height => height
+
+$mol_svg_group $mol_svg
+	dom_name \g
+
+$mol_plot_graph $mol_svg_group
+	series *
+	points <= points_scaled <= points_raw /
+	threshold 4
+	shift /
+		0
+		0
+	scale /
+		1
+		1
+	dimensions_expanded <= dimensions /
+		/
+		/
+	size_real /
+		0
+		0
+	hue NaN
+	-
+	attr *
+		^
+		mol_plot_graph_type <= type \solid
+	-
+	style *
+		^
+		color <= color \
+	-
+	Sample null
+	-
+	front /
+	back /
+
+$mol_plot_graph_sample $mol_view
+	attr *
+		^
+		mol_plot_graph_type <= type \solid
+	style *
+		^
+		color <= color \black
+
+$mol_svg_path $mol_svg
+	dom_name \path
+	attr *
+		^
+		d <= geometry \
+
+
+$mol_plot_bar $mol_plot_graph
+	style *
+		^
+		stroke-width <= stroke_width \1rem
+	sub /
+		<= Curve $mol_svg_path
+			geometry <= curve \
+	Sample $mol_plot_graph_sample
+		color <= color
+
+$mol_svg_text $mol_svg
+	dom_name \text
+	pos /
+	attr *
+		^
+		x <= pos_x \
+		y <= pos_y \
+		text-anchor <= align \middle
+	sub /
+		<= text \
+
+$mol_plot_ruler_vert $mol_plot_graph
+	front /
+	color null
+	sub /
+		<= Curve $mol_svg_path
+			geometry <= curve \
+		<= labels /
+		<= Title $mol_svg_text
+			pos <= title_pos /
+				<= title_pos_x \36px
+				<= title_pos_y \14px
+			align \end
+			sub /
+				<= title
+	Label!index $mol_svg_text
+		pos <= label_pos!index /
+			<= label_pos_x!index <= title_pos_x
+			<= label_pos_y!index \
+		align \end
+		text <= label_text!index \
+
+$mol_plot_ruler_hor $mol_plot_graph
+	front /
+	color null
+	sub /
+		<= Curve $mol_svg_path
+			geometry <= curve \
+		<= labels /
+		<= Title $mol_svg_text
+			pos <= title_pos /
+				<= title_pos_x \0
+				<= title_pos_y \100%
+			align \start
+			sub /
+				<= title
+	Label!index $mol_svg_text
+		pos <= label_pos!index /
+			<= label_pos_x!index \
+			<= label_pos_y!index <= title_pos_y
+		text <= label_text!index \
+
+$mol_string $mol_view
+	dom_name \input
+	enabled true
+	debounce 200
+	minimal_height 40
+	field *
+		^
+		disabled <= disabled false
+		value <= value_changed?val <=> value?val \
+		placeholder <= hint \
+		type <= type?val \text
+		spellcheck <= spellcheck false
+	attr *
+		^
+		maxlength <= length_max Infinity
+	event *
+		^
+		input?event <=> event_change?event null
+		keypress?event <=> event_key_press?event null
+
+$mol_app_issues $mol_page
+	title @ \Time of unresolving issues of GitHub projects
+	tools /
+		<= Sources $mol_link_iconed
+			uri \https://github.com/eigenmethod/mol/tree/master/app/issues
+			content /
+	body /
+		<= Projects $mol_row
+			sub <= projects /
+		<= Chart $mol_plot_pane
+			gap_bottom 0
+			graphs /
+				<= Capacities $mol_plot_bar
+					series <= capacities /
+				<= Capacities_ruler $mol_plot_ruler_vert
+					title \
+					labels /
+				<= Capacities_ruler_hor $mol_plot_ruler_hor
+					title \
+					series <= capacities /
+					labels /
+		<= Description $mol_view
+			sub / <= description @ \Sum of ages of all open issues. Lower is better.
+	Project!index $mol_app_issues_project
+		id?val <=> project_id!index?val \
+
+$mol_app_issues_project $mol_view
+	capacity 0
+	sub /
+		<= Input $mol_view sub /
+			<= Id $mol_string
+				hint \username/repo
+				value?val <=> id?val \
+				debounce 1000
+			<= Homepage $mol_link_iconed
+				uri <= homepage \
+				content /
+		<= Capacity $mol_view
+			minimal_height 80
+			minimal_width 80
+			sub / <= capacity_text \
